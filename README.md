@@ -155,6 +155,7 @@ DogApp/
 │   ├── libs.versions.toml            # Catálogo centralizado de versiones
 │   └── wrapper/                      # Gradle Wrapper (9.5.0)
 ├── AGENTS.md                         # Reglas y convenciones del proyecto
+├── COLOR_PALETTE.md                  # Paleta de colores oficial y uso por HU
 ├── build.gradle.kts                  # Configuración raíz de Gradle
 ├── settings.gradle.kts               # Declaración de módulos (:app)
 ├── LICENSE                           # Licencia MIT
