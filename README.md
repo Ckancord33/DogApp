@@ -1,0 +1,171 @@
+# DogApp — Agenda de Citas para Mascotas
+
+Aplicación móvil nativa Android para la gestión de citas veterinarias, desarrollada para el **Miniproyecto 1 (Sprint 1)** de la asignatura *Desarrollo de Aplicaciones para Dispositivos Móviles* — Universidad del Valle (Escuela de Ingeniería de Sistemas y Computación, Sede Cali).
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-En%20Desarrollo-orange.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Android%20(minSdk%2024%20%7C%20targetSdk%2037)-green.svg)]()
+[![Sprint](https://img.shields.io/badge/sprint-Sprint%201-purple.svg)]()
+
+---
+
+## Descripción
+
+**DogApp** permite al administrador de una veterinaria autenticarse mediante biometría dactilar y gestionar el ciclo completo de citas de pacientes caninos (listar, crear, consultar detalle, editar y eliminar), persistiendo la información localmente con **Room (SQLite)** y enriqueciendo los datos e imágenes de razas mediante el consumo de la API REST pública **Dog CEO**.
+
+---
+
+## Arquitectura y Flujo
+
+La aplicación sigue una arquitectura **MVVM con patrón Repository**, interfaz basada en **Single-Activity + Fragments + Jetpack Navigation** y persistencia local reactiva.
+
+```text
+[ UI: Activity + Fragments (Navigation) ]
+                  ↓
+         [ ViewModels (MVVM) ]
+                  ↓
+            [ Repository ]
+           ↙              ↘
+[ Room / SQLite ]    [ Retrofit (Dog CEO API) ]
+(Citas locales)      (Lista de razas e imágenes)
+```
+
+### Decisiones técnicas clave (según requerimientos)
+
+| Capa / Aspecto | Tecnología / Patrón | Uso en DogApp |
+|---|---|---|
+| Arquitectura | MVVM + Repository | Separación de UI, estado y fuentes de datos |
+| Navegación | `Fragment` + Jetpack Navigation | Flujo entre Login, Home, Nueva Cita, Detalle y Editar |
+| Persistencia local | SQLite con Room | CRUD de citas y generación automática del turno (`ID`) |
+| Red / API REST | Retrofit (`dog.ceo`) | Autocompletado de razas e imagen aleatoria por raza |
+| Autenticación | Biometría Android (`BiometricPrompt`) | Acceso con huella digital en `HU 1.0` |
+| Animaciones / UI | Lottie (`JSON`) + Material Components | Huella animada, loaders, tarjetas e inputs con foco |
+
+---
+
+## Historias de Usuario (Sprint 1)
+
+Resumen rápido del alcance funcional definido para el proyecto:
+
+| ID | Historia de Usuario | Actor | Resumen de criterios clave |
+|---|---|---|---|
+| **HU 1.0** | **Ventana Login** | Aplicación | Fondo gris oscuro sin toolbar, cabeza de perro transparente arriba a la derecha, título `DogApp` (fuente externa), animación Lottie de huella, diálogo biométrico (`Autenticación con Biometría`) que redirige a `HU 2.0`, e ícono personalizado `dogApp`. |
+| **HU 2.0** | **Home Administrador de Citas** | Administrador | Fondo blanco con header gris oscuro curvado, lista desde Room con tarjetas (imagen circular de la raza, nombre, síntoma y `#ID` de turno), FAB rosado (`#F05861`) hacia `HU 3.0`, clic en ítem hacia `HU 4.0`. Botón atrás sale al escritorio. |
+| **HU 3.0** | **Ventana Nueva Cita** | Administrador | Toolbar curvada con retroceso a `HU 2.0`. Campos validados: Mascota (`15` chars), Raza (`AutoCompleteTextView` desde 2 letras vía `breeds/list/all`), Propietario (`30` chars), Teléfono (`10` dígitos) y spinner de Síntomas quemados. Guarda en Room + imagen aleatoria (`breeds/image/random`). |
+| **HU 4.0** | **Ventana Detalle de la Cita** | Administrador | Toolbar con nombre de mascota y retorno a `HU 2.0`. Tarjeta superior con imagen superpuesta sobre tarjeta inferior con turno, raza, síntoma, propietario y teléfono. Botones flotantes: eliminar (rosado, izquierda) y editar (azul oscuro, derecha → `HU 5.0`). |
+| **HU 5.0** | **Ventana Editar Cita** | Administrador | Precarga datos desde `HU 4.0`. Mismas validaciones y autocompletado de raza con Retrofit que `HU 3.0`. Actualiza registro e imagen en Room y retorna a `HU 2.0`. |
+
+### Endpoints externos (Dog CEO API)
+
+- **Listado de razas:** `GET https://dog.ceo/api/breeds/list/all`
+- **Imagen por raza / aleatoria:** `GET https://dog.ceo/api/breeds/image/random` (y endpoint por raza seleccionada)
+
+---
+
+## Stack y Versiones del Proyecto
+
+### Entorno y Build (configuración actual en el repositorio)
+
+| Herramienta / SDK | Versión | Origen |
+|---|---|---|
+| Gradle | `9.5.0` | `gradle-wrapper.properties` |
+| Android Gradle Plugin (AGP) | `9.3.3` | `gradle/libs.versions.toml` |
+| Java Compatibility | `11` | `app/build.gradle.kts` |
+| `compileSdk` / `targetSdk` | `37` | `app/build.gradle.kts` |
+| `minSdk` | `24` (Android 7.0) | `app/build.gradle.kts` |
+| App Version | `1.0` (`versionCode = 1`) | `app/build.gradle.kts` |
+
+### Dependencias configuradas actualmente (`libs.versions.toml`)
+
+| Librería | Versión | Uso |
+|---|---|---|
+| `androidx.core:core-ktx` | `1.19.1` | Extensiones Kotlin para Android |
+| `androidx.appcompat:appcompat` | `1.8.0` | Compatibilidad de componentes UI |
+| `com.google.android.material:material` | `1.14.0` | Material Design (`TextInputLayout`, `FAB`, `CardView`) |
+| `androidx.activity:activity-ktx` | `1.13.0` | Soporte Edge-to-Edge y Activities en Kotlin |
+| `androidx.constraintlayout:constraintlayout` | `2.2.2` | Layouts responsivos |
+| `junit:junit` | `4.13.2` | Pruebas unitarias locales |
+| `androidx.test.ext:junit` | `1.3.0` | Extensiones JUnit para instrumentación |
+| `androidx.test.espresso:espresso-core` | `3.7.0` | Pruebas de UI |
+
+> **Por integrar durante el Sprint 1:** Room (`SQLite`), Retrofit + Gson/Moshi, Jetpack Navigation (`navigation-fragment-ktx`, `navigation-ui-ktx`), Lifecycle (`ViewModel`, `LiveData`/`StateFlow`), `androidx.biometric`, Lottie (`lottie-android`) y carga de imágenes (Glide/Coil).
+
+---
+
+## Requisitos previos e Inicio rápido
+
+- **Android Studio** actualizado (compatible con AGP `9.3.3` y Gradle `9.5.0`)
+- **JDK 11+**
+- Dispositivo físico o emulador Android con **API 24+** (recomendado configurar huella digital en el emulador para probar `HU 1.0`)
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Ckancord33/DogApp.git
+cd DogApp
+```
+
+### 2. Abrir y compilar el proyecto
+
+1. Abrir la carpeta `DogApp` en **Android Studio** y esperar la sincronización de Gradle.
+2. También es posible compilar desde terminal:
+
+```bash
+./gradlew assembleDebug
+```
+
+En Windows (PowerShell):
+
+```powershell
+.\gradlew.bat assembleDebug
+```
+
+### 3. Ejecutar pruebas
+
+```powershell
+.\gradlew.bat test
+```
+
+---
+
+## Estructura del repositorio
+
+```text
+DogApp/
+├── app/
+│   ├── build.gradle.kts              # Configuración del módulo Android y dependencias
+│   └── src/main/
+│       ├── AndroidManifest.xml       # Manifiesto de la aplicación
+│       ├── java/com/example/dogapp/  # Código fuente Kotlin (Activities, Fragments, MVVM)
+│       └── res/                      # Layouts, drawables, mipmaps, temas y valores
+├── gradle/
+│   ├── libs.versions.toml            # Catálogo centralizado de versiones
+│   └── wrapper/                      # Gradle Wrapper (9.5.0)
+├── build.gradle.kts                  # Configuración raíz de Gradle
+├── settings.gradle.kts               # Declaración de módulos (:app)
+├── LICENSE                           # Licencia MIT
+└── README.md                         # Documentación principal
+```
+
+---
+
+## Enlaces del proyecto
+
+- **Repositorio GitHub:** [github.com/Ckancord33/DogApp](https://github.com/Ckancord33/DogApp)
+- **Tablero Jira:** *(Por agregar enlace del tablero del equipo)*
+- **Docente:** Ing. Walter Medina
+
+---
+
+## Integrantes
+
+Desarrollado para el curso de *Desarrollo de Aplicaciones para Dispositivos Móviles* — Universidad del Valle:
+
+- **Nicolás Córdoba** (`2343576-3743`) — *Equipo [Por definir]*
+- *(Agregar demás integrantes del equipo si aplica)*
+
+---
+
+## Licencia
+
+MIT — ver [`LICENSE`](LICENSE).
