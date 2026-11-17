@@ -74,6 +74,7 @@ Resumen rápido del alcance funcional definido para el proyecto:
 | `compileSdk` / `targetSdk` | `37` | `app/build.gradle.kts` |
 | `minSdk` | `24` (Android 7.0) | `app/build.gradle.kts` |
 | App Version | `1.0` (`versionCode = 1`) | `app/build.gradle.kts` |
+| Data Binding | Habilitado (`dataBinding = true`) | `app/build.gradle.kts` |
 
 ### Dependencias configuradas actualmente (`libs.versions.toml`)
 
@@ -133,14 +134,27 @@ En Windows (PowerShell):
 ```text
 DogApp/
 ├── app/
-│   ├── build.gradle.kts              # Configuración del módulo Android y dependencias
+│   ├── build.gradle.kts              # Configuración del módulo Android, dependencias y Data Binding
 │   └── src/main/
 │       ├── AndroidManifest.xml       # Manifiesto de la aplicación
-│       ├── java/com/example/dogapp/  # Código fuente Kotlin (Activities, Fragments, MVVM)
-│       └── res/                      # Layouts, drawables, mipmaps, temas y valores
+│       ├── java/com/example/dogapp/  # Código fuente Kotlin (arquitectura MVVM)
+│       │   ├── data/                 # Capa de datos (Room DAO, Database, API)
+│       │   ├── model/                # Modelos y entidades
+│       │   ├── repository/           # Repositorios de datos
+│       │   ├── utils/                # Utilidades y constantes
+│       │   ├── view/                 # Capa de interfaz de usuario
+│       │   │   ├── adapter/          # Adaptadores de RecyclerView
+│       │   │   ├── fragment/         # Fragments de navegación
+│       │   │   ├── viewholder/       # ViewHolders de RecyclerView
+│       │   │   └── MainActivity.kt   # Activity principal (Hello World con Data Binding)
+│       │   └── viewmodel/            # ViewModels (MVVM)
+│       └── res/                      # Recursos (layouts, drawables, mipmaps, navigation, values, xml)
+│           ├── layout/               # Layouts XML con Data Binding
+│           └── navigation/           # Carpeta para grafos de navegación
 ├── gradle/
 │   ├── libs.versions.toml            # Catálogo centralizado de versiones
 │   └── wrapper/                      # Gradle Wrapper (9.5.0)
+├── AGENTS.md                         # Reglas y convenciones del proyecto
 ├── build.gradle.kts                  # Configuración raíz de Gradle
 ├── settings.gradle.kts               # Declaración de módulos (:app)
 ├── LICENSE                           # Licencia MIT
