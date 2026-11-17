@@ -161,8 +161,12 @@ DogApp/
 
 Desarrollado para el curso de *Desarrollo de Aplicaciones para Dispositivos Móviles* — Universidad del Valle:
 
-- **Nicolás Córdoba** (`2343576-3743`) — *Equipo [Por definir]*
-- *(Agregar demás integrantes del equipo si aplica)*
+| Integrante | Código | GitHub |
+|---|---|---|
+| Nicolás Córdoba | `2343576` | [@Ckancord33](https://github.com/Ckancord33) |
+| Daniel Andrade Reyes | `2343792` | [@Danicol1200](https://github.com/Danicol1200) |
+| Juan Sebastián Sierra Cruz | `2343656` | [@Sebastian6174](https://github.com/Sebastian6174) |
+| Samuel Arenas | `2341928` | [@samuelarenas2005](https://github.com/samuelarenas2005) |
 
 ---
 
